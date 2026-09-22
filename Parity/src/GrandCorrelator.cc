@@ -120,8 +120,8 @@ void GrandCorrelator::ProcessData()
   //TVectorD Y(fDependentValues.size(),   fDependentValues.data());
   //operator+= (std::make_pair(P, Y));
 
-  for(int i = 0; i<fAllVar.size(); ++i){
-    for(int j = i; j<fAllVar.size(); ++j){
+  for(size_t i = 0; i<fAllVar.size(); ++i){
+    for(size_t j = i; j<fAllVar.size(); ++j){
         if(!fAllGood[i] || !fAllGood[j]) continue;
 
         double xi = fAllValues[i];
@@ -770,10 +770,7 @@ GrandCorrelator::GrandCorrelator()
 //=================================================
 //=================================================
 GrandCorrelator::GrandCorrelator(const GrandCorrelator& source)
-: nP(source.nP),nY(source.nY),
-  fErrorFlag(-1),
-  fGoodEventNumber(0),
-  VQwDataHandler(source),
+: VQwDataHandler(source),
   fBlock(source.fBlock),
   fDisableHistos(source.fDisableHistos),
   fAlphaOutputFileBase(source.fAlphaOutputFileBase),
@@ -784,7 +781,10 @@ GrandCorrelator::GrandCorrelator(const GrandCorrelator& source)
   fAliasOutputFileBase(source.fAliasOutputFileBase),
   fAliasOutputFileSuff(source.fAliasOutputFileSuff),
   fAliasOutputPath(source.fAliasOutputPath),
-  fCycleCounter(source.fCycleCounter)
+  nP(source.nP),nY(source.nY),
+  fCycleCounter(source.fCycleCounter),
+  fErrorFlag(-1),
+  fGoodEventNumber(0)
 {
   QwMessage << fGoodEventNumber << QwLog::endl;
 
@@ -1245,9 +1245,8 @@ void GrandCorrelator::solve()
 {
 //==========================================================
 //Solve step 1
-
-for(int i = 0; i < fAllVar.size(); ++i){
-    for(int j = i; j < fAllVar.size(); ++j){
+for(size_t i = 0; i < fAllVar.size(); ++i){
+    for(size_t j = i; j < fAllVar.size(); ++j){
       if(mNij(i,j) >= 2){
         mVij(i,j) = mCij(i,j) / (mNij(i,j) - 1.);
         mVij(j,i) = mVij(i,j);
@@ -1305,8 +1304,8 @@ for(int i = 0; i < fAllVar.size(); ++i){
   mVY = TMatrixDDiag(sigmaY);
 
   // "Clean" matrices
-  for(int i = 0; i < fAllVar.size(); ++i){
-    for(int j = i; j < fAllVar.size(); ++j){
+  for(size_t i = 0; i < fAllVar.size(); ++i){
+    for(size_t j = i; j < fAllVar.size(); ++j){
         mVFULL_clean(i,j) = mRij(i,j) * sigma_ij(i,j) * sigma_ij(j,i) * (fGoodEventNumber - 1);
         mVFULL_clean(j,i) = mVFULL_clean(i,j);
         mSFULL_clean(i,j) = mRij(i,j) * sigma_ij(i,j) * sigma_ij(j,i);
